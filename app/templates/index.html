@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>{{title}} - Arduino ARGB Controller</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+	<!--     Fonts and icons     -->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+  <!-- One of the following themes -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/> <!-- 'classic' theme -->
+  
+  </head>
+  <body class="bg-dark clearfix">
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-3">Arduino ARGB Controller</h1>
+        <p class="lead">Hostname: {{title}}</p>
+        <hr class="my-2">
+        <p>Developed by: <a href="https://pbehre.in">Pavitra Behre</a></p>
+      </div>
+    </div>
+    <div class="container text-light">
+      {% if signal_sent %}
+      <div class="alert alert-success" id="successMsg" role="alert">
+        <h4 class="alert-heading">Data Sent</h4>
+        <p class="mb-0">Signals have been sent on selected port</p>
+      </div>
+      {% endif %}
+      <form id="changeForm" method="POST">
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="exampleFormControlSelect1">Select COM Port</label>
+              <select class="form-control" id="exampleFormControlSelect1" name="selectedPort" required>
+                <option value="" selected disabled>Please Select a Value first</option>
+                {% for key,value in ports.items() %}
+                  <option value="{{key}}">{{key}} - {{value}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="argbMode">ARGB Mode</label>
+              {% for mode,value in modes.items() %}
+              <div class="form-check">
+                <input class="form-check-input argbMode" type="radio" name="argbMode" id="argbMode{{value}}" value="{{value}}" required>
+                <label class="form-check-label" for="argbMode{{value}}">
+                  {{mode}}
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="colorPicker">Color Picker</label>
+              <div class="pickr-container"></div>
+              <input type="hidden" name="customARGB" id="customARGB">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <button type="submit" class="btn btn-primary" name="SendSignal">Send Signal</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- Modern or es5 bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+    <script src="{{ url_for('static', filename='wizard.js') }}"></script>
+  </body>
+</html>

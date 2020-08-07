@@ -112,9 +112,9 @@ void handleSerialInput()
           Serial.println(WAIT_TIME);
         }
       }
-    }else {
-//      led_mode = MODE_RAINBOW;
     }
+    //Should ignore all other types of serial inputs
+    
     Serial.print("Setting led_mode: ");
     Serial.println(led_mode);
   }
@@ -144,19 +144,19 @@ void loop() {
      break;
 
   case MODE_THEATRE_WHITE:
-    theaterChase(strip.Color(127, 127, 127), WAIT_TIME);
+    theaterChase(strip.Color(255, 255, 255), WAIT_TIME);
     break;
   
   case MODE_THEATRE_RED:
-    theaterChase(strip.Color(127,   0,   0), WAIT_TIME);
+    theaterChase(strip.Color(255,   0,   0), WAIT_TIME);
     break;
 
   case MODE_THEATRE_GREEN:
-    theaterChase(strip.Color(0,   127,   0), WAIT_TIME);
+    theaterChase(strip.Color(0,   255,   0), WAIT_TIME);
     break;
 
   case MODE_THEATRE_BLUE:
-    theaterChase(strip.Color(  0,   0, 127), WAIT_TIME);
+    theaterChase(strip.Color(  0,   0, 255), WAIT_TIME);
     break;
 
   case MODE_RED:

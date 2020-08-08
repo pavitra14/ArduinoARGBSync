@@ -1,10 +1,20 @@
 #include <Adafruit_NeoPixel.h>
 #include <stdlib.h>     /* atoi */
+#include <EEPROM.h>
+#include <ctype.h>
 
 //Config Values
 #define PIN 11
+#define PIXELS 60
 
+//EEPROM Memory locations
+#define LED_STORE 0
+#define WT_STORE 1
+#define R_STORE 2
+#define G_STORE 3
+#define B_STORE 4
 
+//MODES
 #define MODE_RAINBOW 1
 #define MODE_RAINBOW_STR "1"
 #define MODE_RAINBOW_CYCLE 2
@@ -31,8 +41,6 @@
 //Commands
 #define CHANGE_WAIT_TIME "WT#"
 
-
-
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = pin number (most are valid)
 // Parameter 3 = pixel type flags, add together as needed:
@@ -40,12 +48,73 @@
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+//Globals
 int led_mode = MODE_RAINBOW;
 int WAIT_TIME = 10;
 int r = 0;
 int g = 0;
 int b = 0;
+
+void setup() {
+  eeprom_persist();
+  Serial.begin(115200); // use the same baud-rate as the python side
+  strip.begin();
+  strip.show(); // Initialize all pixels to 'off'
+}
+
+
+void loop() {
+  eeprom_update();
+  handleSerialInput();
+  handleLedMode();
+}
+
+
+void eeprom_persist()
+{
+    int E_LED_MODE = EEPROM.read(LED_STORE);
+    if(led_mode != E_LED_MODE)
+    {
+      led_mode = E_LED_MODE;
+    }
+
+    int E_WAIT_TIME = EEPROM.read(WT_STORE);
+    if(WAIT_TIME != E_WAIT_TIME)
+    {
+      WAIT_TIME = E_WAIT_TIME;
+    }
+
+
+    int E_R = EEPROM.read(R_STORE);
+    if(r != E_R)
+    {
+      r = E_R;
+    }
+
+    int E_G = EEPROM.read(G_STORE);
+    if(g != E_G)
+    {
+      g = E_G;
+    }
+
+    int E_B = EEPROM.read(B_STORE);
+    if(b != E_B)
+    {
+      b = E_B;
+    }
+}
+
+void eeprom_update()
+{
+    EEPROM.update(LED_STORE, led_mode);
+    EEPROM.update(WT_STORE, WAIT_TIME);
+    EEPROM.update(R_STORE, r);
+    EEPROM.update(G_STORE, g);
+    EEPROM.update(B_STORE, b);     
+}
+
 void handleSerialInput()
 {
   while(Serial.available() > 0)
@@ -119,16 +188,9 @@ void handleSerialInput()
     Serial.println(led_mode);
   }
 }
-void setup() {
-  Serial.begin(115200); // use the same baud-rate as the python side
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
-}
 
-
-void loop() {
-  handleSerialInput();
-   
+void handleLedMode()
+{
   switch (led_mode)
   {
   case MODE_RAINBOW:
@@ -178,21 +240,6 @@ void loop() {
     rainbow(20);
     break;
   }
-//  colorWipe(strip.Color(2, 14, 74), 50);
-  
-  // Some example procedures showing how to display to the pixels:
-//  colorWipe(strip.Color(255, 0, 0), 50); // Red
-//  colorWipe(strip.Color(0, 255, 0), 50); // Green
-//  colorWipe(strip.Color(0, 0, 255), 50); // Blue
-//
-//  // Send a theater pixel chase in...
-//  theaterChase(strip.Color(127, 127, 127), 50); // White
-//  theaterChase(strip.Color(127,   0,   0), 50); // Red
-//  theaterChase(strip.Color(0,   127,   0), 50); // Green
-//  theaterChase(strip.Color(  0,   0, 127), 50); // Blue
-//
-//  rainbowCycle(20);
-//  theaterChaseRainbow(50);
 }
 
 // Fill the dots one after the other with a color

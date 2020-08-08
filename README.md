@@ -32,6 +32,7 @@ Navigate to sketch_aug06a.ino inside sketch_aug06a folder and edit the following
 ```C
 //Config Values
 #define PIN 11
+#define PIXELS 60
 ```
 Upload the file to your arduino board.
 

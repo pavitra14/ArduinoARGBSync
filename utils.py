@@ -26,6 +26,7 @@ PRESETS = {
     "MODE_RED": "8",
     "MODE_GREEN": "9",
     "MODE_BLUE": "10",
+    "MODE_WHITE": "CUSTOM#255#255#255",
     "MODE_CUSTOM": "11",
     "CHANGE_WAIT_TIME_1": "WT#1",
     "CHANGE_WAIT_TIME_5": "WT#5",

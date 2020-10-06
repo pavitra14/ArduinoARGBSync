@@ -2,44 +2,34 @@
 #include <stdlib.h>     /* atoi */
 #include <EEPROM.h>
 #include <ctype.h>
-
+#include "MODES.h"
 //Config Values
 #define PIN 11
 #define PIXELS 60
 
-//EEPROM Memory locations
-#define LED_STORE 0
-#define WT_STORE 1
-#define R_STORE 2
-#define G_STORE 3
-#define B_STORE 4
 
-//MODES
-#define MODE_RAINBOW 1
-#define MODE_RAINBOW_STR "1"
-#define MODE_RAINBOW_CYCLE 2
-#define MODE_RAINBOW_CYCLE_STR "2"
-#define MODE_RAINBOW_THEATRE 3
-#define MODE_RAINBOW_THEATRE_STR "3"
-#define MODE_THEATRE_WHITE 4
-#define MODE_THEATRE_WHITE_STR "4"
-#define MODE_THEATRE_RED 5
-#define MODE_THEATRE_RED_STR "5"
-#define MODE_THEATRE_GREEN 6
-#define MODE_THEATRE_GREEN_STR "6"
-#define MODE_THEATRE_BLUE 7
-#define MODE_THEATRE_BLUE_STR "7"
-#define MODE_RED 8
-#define MODE_RED_STR "8"
-#define MODE_GREEN 9
-#define MODE_GREEN_STR "9"
-#define MODE_BLUE 10
-#define MODE_BLUE_STR "10"
-#define MODE_CUSTOM 11
-#define MODE_CUSTOM_STR "CUSTOM"
+/*
+* Function Declarations
+*/
+//Required
+void setup();
+void loop();
+//User
+void handleSerialInput();
+void handleLedMode();
+//Effects
+void colorWipe(uint32_t c, uint8_t wait);
+void rainbow(uint8_t wait);
+void rainbowCycle(uint8_t wait);
+void theaterChase(uint32_t c, uint8_t wait);
+void theaterChaseRainbow(uint8_t wait);
+void move_effect();
+uint32_t Wheel(byte WheelPos);
+//Persistent Memory
+void eeprom_persist();
+void eeprom_update();
 
-//Commands
-#define CHANGE_WAIT_TIME "WT#"
+
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = pin number (most are valid)
@@ -59,8 +49,12 @@ int b = 0;
 
 void setup() {
   eeprom_persist();
-  Serial.begin(115200); // use the same baud-rate as the python side
+  Serial.begin(9600); // use the same baud-rate as the python side
+    while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
   strip.begin();
+  strip.setBrightness(255);
   strip.show(); // Initialize all pixels to 'off'
 }
 
@@ -69,50 +63,6 @@ void loop() {
   eeprom_update();
   handleSerialInput();
   handleLedMode();
-}
-
-
-void eeprom_persist()
-{
-    int E_LED_MODE = EEPROM.read(LED_STORE);
-    if(led_mode != E_LED_MODE)
-    {
-      led_mode = E_LED_MODE;
-    }
-
-    int E_WAIT_TIME = EEPROM.read(WT_STORE);
-    if(WAIT_TIME != E_WAIT_TIME)
-    {
-      WAIT_TIME = E_WAIT_TIME;
-    }
-
-
-    int E_R = EEPROM.read(R_STORE);
-    if(r != E_R)
-    {
-      r = E_R;
-    }
-
-    int E_G = EEPROM.read(G_STORE);
-    if(g != E_G)
-    {
-      g = E_G;
-    }
-
-    int E_B = EEPROM.read(B_STORE);
-    if(b != E_B)
-    {
-      b = E_B;
-    }
-}
-
-void eeprom_update()
-{
-    EEPROM.update(LED_STORE, led_mode);
-    EEPROM.update(WT_STORE, WAIT_TIME);
-    EEPROM.update(R_STORE, r);
-    EEPROM.update(G_STORE, g);
-    EEPROM.update(B_STORE, b);     
 }
 
 void handleSerialInput()
@@ -148,7 +98,6 @@ void handleSerialInput()
     } else if(strcmp(str,MODE_BLUE_STR) == 0) {
       led_mode = MODE_BLUE;
     } else if(in.indexOf("CUSTOM") > -1) {
-      //TODO: Set Custom Colors
       char * token = strtok(str, "#");
       // loop through the string to extract all other tokens
       int c = 1;
@@ -168,7 +117,6 @@ void handleSerialInput()
        }
        led_mode = MODE_CUSTOM;
     } else if(in.indexOf("WT") > -1) {
-      //TODO: Set WAIT_TIME
       char * token = strtok(str, "#");
       int c=1;
       while( token !=  NULL) {
@@ -183,7 +131,6 @@ void handleSerialInput()
       }
     }
     //Should ignore all other types of serial inputs
-    
     Serial.print("Setting led_mode: ");
     Serial.println(led_mode);
   }
@@ -196,7 +143,6 @@ void handleLedMode()
   case MODE_RAINBOW:
     rainbow(WAIT_TIME);
     break;
-    
   case MODE_RAINBOW_CYCLE:
     rainbowCycle(WAIT_TIME);
     break;
@@ -208,7 +154,7 @@ void handleLedMode()
   case MODE_THEATRE_WHITE:
     theaterChase(strip.Color(255, 255, 255), WAIT_TIME);
     break;
-  
+
   case MODE_THEATRE_RED:
     theaterChase(strip.Color(255,   0,   0), WAIT_TIME);
     break;
@@ -236,6 +182,7 @@ void handleLedMode()
   case MODE_CUSTOM:
     colorWipe(strip.Color(r, g, b), WAIT_TIME);
     break;
+
   default:
     rainbow(20);
     break;
@@ -331,4 +278,47 @@ uint32_t Wheel(byte WheelPos) {
    WheelPos -= 170;
    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
+}
+
+void eeprom_persist()
+{
+    int E_LED_MODE = EEPROM.read(LED_STORE);
+    if(led_mode != E_LED_MODE)
+    {
+      led_mode = E_LED_MODE;
+    }
+
+    int E_WAIT_TIME = EEPROM.read(WT_STORE);
+    if(WAIT_TIME != E_WAIT_TIME)
+    {
+      WAIT_TIME = E_WAIT_TIME;
+    }
+
+
+    int E_R = EEPROM.read(R_STORE);
+    if(r != E_R)
+    {
+      r = E_R;
+    }
+
+    int E_G = EEPROM.read(G_STORE);
+    if(g != E_G)
+    {
+      g = E_G;
+    }
+
+    int E_B = EEPROM.read(B_STORE);
+    if(b != E_B)
+    {
+      b = E_B;
+    }
+}
+
+void eeprom_update()
+{
+    EEPROM.update(LED_STORE, led_mode);
+    EEPROM.update(WT_STORE, WAIT_TIME);
+    EEPROM.update(R_STORE, r);
+    EEPROM.update(G_STORE, g);
+    EEPROM.update(B_STORE, b);
 }

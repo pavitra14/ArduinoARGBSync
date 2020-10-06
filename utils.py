@@ -28,6 +28,7 @@ PRESETS = {
     "MODE_BLUE": "10",
     "MODE_WHITE": "CUSTOM#255#255#255",
     "MODE_CUSTOM": "11",
+    "MODE_MOVE": "12",
     "CHANGE_WAIT_TIME_1": "WT#1",
     "CHANGE_WAIT_TIME_5": "WT#5",
     "CHANGE_WAIT_TIME_10": "WT#10",
@@ -41,7 +42,7 @@ def handle_change(data):
     selected_com = data['selectedPort']
     argb_mode = data['argbMode']
     argb_value = data['customARGB']
-    a = serial.Serial(selected_com, 115200, timeout=.1)
+    a = serial.Serial(selected_com, 9600, timeout=.1)
     time.sleep(5)
     instruction = argb_mode if argb_mode != PRESETS['MODE_CUSTOM'] else "CUSTOM#"+argb_value
     a.write(bytearray(instruction, 'utf-8'))

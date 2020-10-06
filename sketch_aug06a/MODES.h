@@ -1,0 +1,33 @@
+//EEPROM Memory locations
+#define LED_STORE 0
+#define WT_STORE 1
+#define R_STORE 2
+#define G_STORE 3
+#define B_STORE 4
+
+//MODES
+#define MODE_RAINBOW 1
+#define MODE_RAINBOW_STR "1"
+#define MODE_RAINBOW_CYCLE 2
+#define MODE_RAINBOW_CYCLE_STR "2"
+#define MODE_RAINBOW_THEATRE 3
+#define MODE_RAINBOW_THEATRE_STR "3"
+#define MODE_THEATRE_WHITE 4
+#define MODE_THEATRE_WHITE_STR "4"
+#define MODE_THEATRE_RED 5
+#define MODE_THEATRE_RED_STR "5"
+#define MODE_THEATRE_GREEN 6
+#define MODE_THEATRE_GREEN_STR "6"
+#define MODE_THEATRE_BLUE 7
+#define MODE_THEATRE_BLUE_STR "7"
+#define MODE_RED 8
+#define MODE_RED_STR "8"
+#define MODE_GREEN 9
+#define MODE_GREEN_STR "9"
+#define MODE_BLUE 10
+#define MODE_BLUE_STR "10"
+#define MODE_CUSTOM 11
+#define MODE_CUSTOM_STR "CUSTOM"
+
+//Commands
+#define CHANGE_WAIT_TIME "WT#"

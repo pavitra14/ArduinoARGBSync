@@ -3,17 +3,32 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:\\Program Files (x86)\\Arduino\\tools\\**",
+                "C:/Program Files (x86)/Arduino/tools/**",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/**",
+                "C:/Program Files (x86)/Arduino/libraries/**",
+                "C:/Users/Pavitra/Documents/Arduino/libraries/**",
+                "${workspaceFolder}/**",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
-                "${workspaceFolder}/**"
+                "C:\\Program Files (x86)\\Arduino\\tools\\**"
             ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "C:/Program Files (x86)/Arduino/tools/**",
+                    "C:/Program Files (x86)/Arduino/hardware/arduino/avr/**",
+                    "C:/Program Files (x86)/Arduino/libraries/**",
+                    "C:/Users/Pavitra/Documents/Arduino/libraries/**",
+                    "${workspaceFolder}/**"
+                ]
+            },
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "intelliSenseMode": "msvc-x64",
+            "intelliSenseMode": "${default}",
             "forcedInclude": [
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino/Arduino.h",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
             ]
         }
